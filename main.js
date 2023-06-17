@@ -1,33 +1,53 @@
 //Game.spawns['Spawn1'].room.controller.activateSafeMode();
-//Game.spawns['Spawn1'].room.createConstructionSite( 23, 22, STRUCTURE_TOWER );
+//Game.spawns['Spawn1'].room.createConstructionSite( 23, 22, STRUCTURE_EXTENSION );
 //Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE],     'HarvesterBig',     { memory: { role: 'harvester' } } );
 
-const roleHarvester = require('role.harvester');
-const roleUpgrader = require('role.upgrader');
-const roleBuilder = require('role.builder');
-const runDefense = require('run.defense');
-const runSpawn = require('run.spawn');
-const Roles = require('util.roles');
+const roleHarvester = require('./role.harvester');
+const roleUpgrader = require('./role.upgrader');
+const roleBuilder = require('./role.builder');
+const runSpawn = require('./run.spawn');
+const Roles = require('./config.roles');
 
 module.exports.loop = function () {
-  for (const name in Memory.creeps) {
-    if (!Game.creeps[name]) delete Memory.creeps[name];
+  for (const creepName in Memory.creeps) {
+    if (!Game.creeps[creepName]) delete Memory.creeps[creepName];
   }
 
-  //   runDefense(Game);
-  runSpawn(Game);
+  try {
+    Game.spawns['Spawn1'].room.createConstructionSite(28, 43, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(26, 43, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(27, 44, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(25, 44, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(26, 45, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(24, 43, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(24, 45, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(23, 44, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(22, 43, STRUCTURE_EXTENSION);
+    Game.spawns['Spawn1'].room.createConstructionSite(22, 45, STRUCTURE_EXTENSION);
+  } catch (error) {}
 
-  for (const name in Game.creeps) {
-    switch (name.substring(0, 3)) {
-      case Roles.Harvester:
-        roleHarvester(Game.creeps[name]);
+  // console.log(BODYPART_COST.move)
+
+  for (const spawnName in Game.spawns) {
+    // console.log(JSON.stringify(Game.spawns[spawnName], null, 2));
+
+    runSpawn(Game, Game.spawns[spawnName]);
+  }
+
+  for (const creepName in Game.creeps) {
+    switch (creepName.substring(0, 1)) {
+      case Roles.Harvester.prefix:
+        roleHarvester(Game.creeps[creepName]);
         continue;
-      case Roles.Upgrader:
-        roleUpgrader(Game.creeps[name]);
+      case Roles.Upgrader.prefix:
+        roleUpgrader(Game.creeps[creepName]);
         continue;
-      case Roles.Builder:
-        roleBuilder(Game.creeps[name]);
+      case Roles.Builder.prefix:
+        roleBuilder(Game.creeps[creepName]);
         continue;
     }
   }
 };
+
+//Game.spawns['Spawn1'].room.createConstructionSite( 8, 42, STRUCTURE_EXTENSION );
+//Game.spawns['Spawn1'].room.createConstructionSite( 10, 43, STRUCTURE_LINK );
