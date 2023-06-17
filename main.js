@@ -13,19 +13,6 @@ module.exports.loop = function () {
     if (!Game.creeps[creepName]) delete Memory.creeps[creepName];
   }
 
-  try {
-    Game.spawns['Spawn1'].room.createConstructionSite(28, 43, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(26, 43, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(27, 44, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(25, 44, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(26, 45, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(24, 43, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(24, 45, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(23, 44, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(22, 43, STRUCTURE_EXTENSION);
-    Game.spawns['Spawn1'].room.createConstructionSite(22, 45, STRUCTURE_EXTENSION);
-  } catch (error) {}
-
   // console.log(BODYPART_COST.move)
 
   for (const spawnName in Game.spawns) {
