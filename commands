@@ -1,0 +1,11 @@
+Game.spawns['Spawn1'].room.controller.activateSafeMode();
+
+Game.spawns['Spawn1'].room.createConstructionSite(23, 22, STRUCTURE_EXTENSION);
+
+Game.spawns['Spawn1'].room.createConstructionSite(10, 43, STRUCTURE_LINK);
+
+Game.spawns['Spawn1'].spawnCreep([WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE], 'HarvesterBig', {
+  memory: { role: 'harvester' },
+});
+
+console.log(BODYPART_COST.move);

@@ -1,5 +1,6 @@
 module.exports = (creep) => {
   if (creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
+    if (creep.ticksToLive < 50) creep.suicide();
     creep.memory.building = false;
   }
 
@@ -8,24 +9,7 @@ module.exports = (creep) => {
   }
 
   if (creep.memory.building) {
-    let targets = creep.room.find(FIND_STRUCTURES, {
-      filter: (structure) => {
-        return (
-          (structure.structureType == STRUCTURE_EXTENSION ||
-            structure.structureType == STRUCTURE_TOWER) &&
-          structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-        );
-      },
-    });
-
-    if (targets.length > 0) {
-      if (creep.transfer(targets[targets.length - 1], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(targets[targets.length - 1], { visualizePathStyle: { stroke: '#ffffff' } });
-      }
-      return;
-    }
-
-    targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+    const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
 
     if (targets.length) {
       if (creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
@@ -36,25 +20,18 @@ module.exports = (creep) => {
       return;
     }
 
-    const target = Game.getObjectById('648ce5567f583d669b2ebd3f');
-
-    if (target.store.getFreeCapacity() > 500) {
-      if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
-      }
-      return;
-    }
-
     if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
       creep.moveTo(creep.room.controller, {
         visualizePathStyle: { stroke: '#ffffff' },
       });
     }
   } else {
-    const sources = creep.room.find(FIND_SOURCES);
+    const target = Game.getObjectById('648e521da9d4162ddd54c7f3');
 
-    if (creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
-      creep.moveTo(sources[1], { visualizePathStyle: { stroke: '#ffaa00' } });
+    if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+      creep.moveTo(target, { visualizePathStyle: { stroke: '#ffffff' } });
+    } else if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_ENOUGH_RESOURCES) {
+      creep.memory.building = true;
     }
   }
 };
