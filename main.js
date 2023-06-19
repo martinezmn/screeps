@@ -1,33 +1,29 @@
-//Game.spawns['Spawn1'].room.controller.activateSafeMode();
-//Game.spawns['Spawn1'].room.createConstructionSite( 23, 22, STRUCTURE_TOWER );
-//Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE],     'HarvesterBig',     { memory: { role: 'harvester' } } );
-
-const roleHarvester = require('role.harvester');
-const roleUpgrader = require('role.upgrader');
-const roleBuilder = require('role.builder');
-const runDefense = require('run.defense');
-const runSpawn = require('run.spawn');
-const Roles = require('util.roles');
+const Roles = require('./config.roles');
+const runDefense = require('./run.defense');
+const runLinks = require('./run.links');
+const runSpawns = require('./run.spawns');
 
 module.exports.loop = function () {
-  for (const name in Memory.creeps) {
-    if (!Game.creeps[name]) delete Memory.creeps[name];
+  for (const creepName in Memory.creeps) {
+    if (!Game.creeps[creepName]) delete Memory.creeps[creepName];
   }
 
-  //   runDefense(Game);
-  runSpawn(Game);
+  const creeps = Object.keys(Game.creeps).reduce((creeps, creepName) => {
+    const creepRole = creepName.split(' ')[0];
+    if (!creeps[creepRole]) creeps[creepRole] = [];
+    creeps[creepRole].push(creepName);
+    return creeps;
+  }, {});
 
-  for (const name in Game.creeps) {
-    switch (name.substring(0, 3)) {
-      case Roles.Harvester:
-        roleHarvester(Game.creeps[name]);
-        continue;
-      case Roles.Upgrader:
-        roleUpgrader(Game.creeps[name]);
-        continue;
-      case Roles.Builder:
-        roleBuilder(Game.creeps[name]);
-        continue;
+  runSpawns(creeps);
+
+  for (const role of Roles) {
+    if (!creeps[role.prefix]) continue;
+    for (const creepName of creeps[role.prefix]) {
+      role.action(Game.creeps[creepName]);
     }
   }
+
+  runDefense();
+  runLinks();
 };
